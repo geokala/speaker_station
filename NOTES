@@ -1,0 +1,17 @@
+Install: sudo apt-get install pdf-presenter-console gstreamer1.0-gtk3 libreoffice-impress
+
+If supplied with a PDF, we run: pdfpc "<filename>"
+If supplied with PPTX/ODP, we run: soffice --norestore --view --nologo --show "<filename>"
+
+TODO:
+1. Startup helper for getting displays the right way around:
+   - Dear god, xrandr and x are a fucking nuisance to work with
+   - Just put a 'This is the projector. If this appears on the lectern screan, swap the cables' background.
+   - BACKGROUND IMAGES NEED DOING
+2. Something to pick up presentations (PDF, PPTX, ODP) from an inserted USB key and run the chosen one using pdfpc (for PDFs) or libreoffice (for anything else). (can possibly make menu using Textual- textual.textualize.io)
+   - App in progress- needs to update display so that you can't just keep selecting when you have already selected (until the presentation displaying finishes)
+   - Maybe add an extra thread to monitor a pipe that udevscript writes to when triggered? Otherwise, just keep it manual.
+3. Installer instructions and an image of the SD card.
+4. Some help blurb on the site once we have the basic functionality in place.
+5. Organise this repo better, it's a mess.
+6. Update README
