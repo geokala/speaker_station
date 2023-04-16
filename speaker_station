@@ -1,0 +1,112 @@
+#! /usr/bin/env python3
+"""Speaker station for managing presentations."""
+import argparse
+import os
+import subprocess
+import sys
+
+from textual.app import App, ComposeResult
+from textual.widgets import Footer, Label, ListItem, ListView
+
+
+class LabelItem(ListItem):
+    """Custom item for list to be useful here by having a label."""
+    def __init__(self, label: str) -> None:
+        super().__init__()
+        self.label = label
+
+    def compose( self ) -> ComposeResult:
+        """Compose the object onto textual's display."""
+        yield Label(self.label)
+
+
+# Can't seem to fix this issue mypy is reporting- maybe it's textual-side?
+class SpeakerStation(App):  # type: ignore[type-arg]
+    """Speaker station textual app."""
+    CSS_PATH = "speaker_station.css"
+    BINDINGS = [
+        ("r", "refresh", "Refresh file listing"),
+        ("q", "quit", "Quit"),
+    ]
+
+    def __init__(self, presentation_root: str) -> None:
+        self.presentation_root = presentation_root
+        self.available_presentations = ListView()
+        super().__init__()
+
+    def _scan_for_presentations(self) -> None:
+        """Scan the presentation root for supported presentation files."""
+        found_presentations = sorted(subprocess.check_output([
+            'find', self.presentation_root,
+            '-type', 'f',
+            '(',
+            '-name', '*.pdf',
+            '-o', '-name', '*.pptx',
+            '-o', '-name', '*.ods',
+            ')'
+        ]).decode('utf8').splitlines())
+        self.available_presentations.clear()
+        for presentation in found_presentations:
+            presentation_without_root = presentation[
+                len(self.presentation_root):]
+            self.available_presentations.append(LabelItem(
+                presentation_without_root))
+        self.available_presentations.validate_index(1)
+        # Force refresh or files going away makes the display cruddy
+        self.refresh()
+        # And let's actually focus so that keyboard navigation works better
+        self.screen.focus_next()
+
+    def compose(self) -> ComposeResult:
+        """Actually put stuff on the screen. Kinda pointless otherwise."""
+        yield self.available_presentations
+        yield Footer()
+
+    def on_mount(self) -> None:
+        """Event after the app enters application mode."""
+        self._scan_for_presentations()
+
+    def action_refresh(self) -> None:
+        "Called when the user requests a refresh"
+        self._scan_for_presentations()
+
+    def on_list_view_selected(self, event: ListView.Selected) -> None:
+        """Open the selected presentation."""
+        selected_file = os.path.join(self.presentation_root, event.item.label)
+        if selected_file.endswith('pdf'):
+            subprocess.check_output(['pdfpc', selected_file],
+                stderr=subprocess.STDOUT)
+        else:
+            subprocess.check_output([
+                'soffice', '--norestore', '--view', '--nologo',
+                '--show', selected_file],
+                stderr=subprocess.STDOUT)
+
+
+def existing_path_arg(path: str) -> str:
+    """Argparse custom type to make sure the path exists."""
+    if not os.path.exists(path):
+        raise argparse.ArgumentTypeError(f'Path {path} does not exist!')
+
+    return path
+
+
+def parse_args(args: list[str]) -> argparse.Namespace:
+    """Parse CLI arguments for speaker station."""
+    parser = argparse.ArgumentParser(
+        description='Speaker station terminal app. You know, for presenting.')
+
+    parser.add_argument(
+        '-p', '--presentation-root',
+        help='Base location under which directories containing '\
+             'presenations are expected to appear.',
+        type=existing_path_arg,
+        default='/media/speaker',
+    )
+
+    return parser.parse_args(args)
+
+
+if __name__ == '__main__':
+    parsed_args = parse_args(sys.argv[1:])
+    SpeakerStation(parsed_args.presentation_root).run()
