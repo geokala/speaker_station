@@ -4,6 +4,8 @@ import argparse
 import os
 import subprocess
 import sys
+from threading import Lock
+from typing import Optional
 
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Label, ListItem, ListView
@@ -32,10 +34,18 @@ class SpeakerStation(App):  # type: ignore[type-arg]
     def __init__(self, presentation_root: str) -> None:
         self.presentation_root = presentation_root
         self.available_presentations = ListView()
+        self.presenting_lock = Lock()
+        self.scanning_lock = Lock()
+        self.last_displayed: Optional[str] = None
         super().__init__()
 
     def _scan_for_presentations(self) -> None:
         """Scan the presentation root for supported presentation files."""
+        # Ignoring pylint because the context manager is blocking
+        if not self.scanning_lock.acquire(blocking=False):  # pylint: disable=consider-using-with
+            # We're already scanning, ignore the request
+            return
+        self.last_displayed = None
         found_presentations = sorted(subprocess.check_output([
             'find', self.presentation_root,
             '-type', 'f',
@@ -56,6 +66,7 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         self.refresh()
         # And let's actually focus so that keyboard navigation works better
         self.screen.focus_next()
+        self.scanning_lock.release()
 
     def compose(self) -> ComposeResult:
         """Actually put stuff on the screen. Kinda pointless otherwise."""
@@ -72,7 +83,17 @@ class SpeakerStation(App):  # type: ignore[type-arg]
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """Open the selected presentation."""
-        selected_file = os.path.join(self.presentation_root, event.item.label)
+        # Ignore typing problem because it's not a Label, mypy!
+        selected_item = event.item.label  # type: ignore[attr-defined]
+        selected_file = os.path.join(self.presentation_root, selected_item)
+        if selected_file == self.last_displayed:
+            # We just showed this one, stop hitting the button
+            return
+        # Ignoring pylint because the context manager is blocking
+        if not self.presenting_lock.acquire(blocking=False):  # pylint: disable=consider-using-with
+            # We're already presenting, don't queue up another one!
+            return
+        self.last_displayed = selected_file
         if selected_file.endswith('pdf'):
             subprocess.check_output(['pdfpc', selected_file],
                 stderr=subprocess.STDOUT)
@@ -81,6 +102,7 @@ class SpeakerStation(App):  # type: ignore[type-arg]
                 'soffice', '--norestore', '--view', '--nologo',
                 '--show', selected_file],
                 stderr=subprocess.STDOUT)
+        self.presenting_lock.release()
 
 
 def existing_path_arg(path: str) -> str:
