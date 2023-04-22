@@ -9,7 +9,6 @@ TODO:
    - Just put a 'This is the projector. If this appears on the lectern screan, swap the cables' background.
    - BACKGROUND IMAGES NEED DOING
 2. Something to pick up presentations (PDF, PPTX, ODP) from an inserted USB key and run the chosen one using pdfpc (for PDFs) or libreoffice (for anything else). (can possibly make menu using Textual- textual.textualize.io)
-   - App in progress- needs to update display so that you can't just keep selecting when you have already selected (until the presentation displaying finishes)
    - Maybe add an extra thread to monitor a pipe that udevscript writes to when triggered? Otherwise, just keep it manual.
 3. Installer instructions and an image of the SD card.
 4. Some help blurb on the site once we have the basic functionality in place.
