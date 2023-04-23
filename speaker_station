@@ -8,7 +8,11 @@ from threading import Lock
 from typing import Optional
 
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Label, ListItem, ListView
+from textual.reactive import var
+from textual.widgets import Footer, Label, ListItem, ListView, Static
+
+
+DEFAULT_MESSAGE = 'Welcome to speaker station!'
 
 
 class LabelItem(ListItem):
@@ -30,6 +34,7 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         ("r", "refresh", "Refresh file listing"),
         ("q", "quit", "Quit"),
     ]
+    message = var(DEFAULT_MESSAGE)
 
     def __init__(self, presentation_root: str) -> None:
         self.presentation_root = presentation_root
@@ -38,6 +43,10 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         self.scanning_lock = Lock()
         self.last_displayed: Optional[str] = None
         super().__init__()
+
+    def watch_message(self, value: str) -> None:
+        """Called when message is updated."""
+        self.query_one("#message", Static).update(value)
 
     def _scan_for_presentations(self) -> None:
         """Scan the presentation root for supported presentation files."""
@@ -66,16 +75,19 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         self.refresh()
         # And let's actually focus so that keyboard navigation works better
         self.screen.focus_next()
+        self.message = DEFAULT_MESSAGE
         self.scanning_lock.release()
 
     def compose(self) -> ComposeResult:
         """Actually put stuff on the screen. Kinda pointless otherwise."""
+        yield Static(id="message")
         yield self.available_presentations
         yield Footer()
 
     def on_mount(self) -> None:
         """Event after the app enters application mode."""
         self._scan_for_presentations()
+        self.query_one("#message", Static).update(self.message)
 
     def action_refresh(self) -> None:
         "Called when the user requests a refresh"
@@ -88,12 +100,17 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         selected_file = os.path.join(self.presentation_root, selected_item)
         if selected_file == self.last_displayed:
             # We just showed this one, stop hitting the button
+            self.message = (
+                f'Already displayed {selected_item}. '
+                'Press "r" to stop blocking replay.'
+            )
             return
         # Ignoring pylint because the context manager is blocking
         if not self.presenting_lock.acquire(blocking=False):  # pylint: disable=consider-using-with
             # We're already presenting, don't queue up another one!
             return
         self.last_displayed = selected_file
+        self.message = f'Displaying {selected_item}'
         if selected_file.endswith('pdf'):
             subprocess.check_output(['pdfpc', selected_file],
                 stderr=subprocess.STDOUT)
@@ -102,6 +119,7 @@ class SpeakerStation(App):  # type: ignore[type-arg]
                 'soffice', '--norestore', '--view', '--nologo',
                 '--show', selected_file],
                 stderr=subprocess.STDOUT)
+        self.message = f'Displayed {selected_item}'
         self.presenting_lock.release()
 
 
