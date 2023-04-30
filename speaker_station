@@ -67,6 +67,8 @@ class SpeakerStation(App):  # type: ignore[type-arg]
             '-o', '-name', '*.ods',
             ')'
         ]).decode('utf8').splitlines())
+
+
         self.available_presentations.clear()
         scroll_count = 0
         for idx, presentation in enumerate(found_presentations):
@@ -82,7 +84,13 @@ class SpeakerStation(App):  # type: ignore[type-arg]
         self.screen.focus_next()
         for _scroll in range(scroll_count):
             self.available_presentations.action_cursor_down()
-        self.message = DEFAULT_MESSAGE
+
+        if found_presentations:
+            self.message = DEFAULT_MESSAGE
+        else:
+            self.message = \
+                 f"No presentations found in {self.presentation_root}"
+
         self.scanning_lock.release()
 
     def compose(self) -> ComposeResult:
