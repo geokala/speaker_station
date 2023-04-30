@@ -50,6 +50,10 @@ class SpeakerStation(App):  # type: ignore[type-arg]
 
     def _scan_for_presentations(self) -> None:
         """Scan the presentation root for supported presentation files."""
+        selected: Optional[str] = None
+        highlighted = self.available_presentations.highlighted_child
+        if highlighted:
+            selected = highlighted.label  # type: ignore[attr-defined]
         # Ignoring pylint because the context manager is blocking
         if not self.scanning_lock.acquire(blocking=False):  # pylint: disable=consider-using-with
             # We're already scanning, ignore the request
@@ -65,16 +69,20 @@ class SpeakerStation(App):  # type: ignore[type-arg]
             ')'
         ]).decode('utf8').splitlines())
         self.available_presentations.clear()
-        for presentation in found_presentations:
+        scroll_count = 0
+        for idx, presentation in enumerate(found_presentations):
             presentation_without_root = presentation[
                 len(self.presentation_root):]
-            self.available_presentations.append(LabelItem(
-                presentation_without_root))
-        self.available_presentations.validate_index(1)
+            if presentation_without_root == selected:
+                scroll_count = idx
+            self.available_presentations.append(
+                LabelItem(presentation_without_root))
         # Force refresh or files going away makes the display cruddy
         self.refresh()
         # And let's actually focus so that keyboard navigation works better
         self.screen.focus_next()
+        for _scroll in range(scroll_count):
+            self.available_presentations.action_cursor_down()
         self.message = DEFAULT_MESSAGE
         self.scanning_lock.release()
 
