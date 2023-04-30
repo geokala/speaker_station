@@ -32,7 +32,6 @@ class SpeakerStation(App):  # type: ignore[type-arg]
     CSS_PATH = "speaker_station.css"
     BINDINGS = [
         ("r", "refresh", "Refresh file listing"),
-        ("q", "quit", "Quit"),
     ]
     message = var(DEFAULT_MESSAGE)
 
