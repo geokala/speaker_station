@@ -12,11 +12,13 @@ draw.pieslice([(940, 360), (980, 400)], start=180, end=270, fill='black')
 draw.pieslice([(1010, 360), (1050, 400)], start=270, end=360, fill='black')
 draw.rectangle([(960,360), (1030, 380)], fill='black')
 
-# TODO: Eye
+# Eye
+draw.pieslice([(965,375), (985, 395)], start=0, end=360, fill='white')
 
-# TODO: Mouth
-
-# TODO: Maybe tongue
+# Mouth
+draw.chord([(920, 370), (1005, 440)], start=20, end=120, fill='black')
 
 # TODO: Microphone
+
+# TODO: Tail? Or stage (with screen/projector?)? Or tail circled around to make a circular 'viewing window'?
 image.show()
