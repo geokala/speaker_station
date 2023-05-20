@@ -11,12 +11,15 @@ draw.rectangle([(940, 380), (1050, 420)], fill='black')
 draw.pieslice([(940, 360), (980, 400)], start=180, end=270, fill='black')
 draw.pieslice([(1010, 360), (1050, 400)], start=270, end=360, fill='black')
 draw.rectangle([(960,360), (1030, 380)], fill='black')
-
 # Eye
 draw.pieslice([(965,375), (985, 395)], start=0, end=360, fill='white')
-
 # Mouth
 draw.chord([(915, 360), (1025, 440)], start=20, end=120, fill='black')
+
+# Tail for focus
+draw.arc([(740, 250), (1160, 720)], start=90, end=71, width=50, fill="black")
+draw.arc([(967, 540), (1150, 720)], start=95, end=160, width=30, fill="white")
+draw.polygon([(950, 670), (950, 720), (1020, 695)], fill="black")
 
 # Microphone
 draw.ellipse([(865, 420), (915, 470)], outline="black")
@@ -47,5 +50,4 @@ draw.line([(868, 436), (912, 436)], fill="black")
 draw.line([(867, 439), (913, 439)], fill="black")
 draw.line([(865, 442), (915, 442)], fill="black")
 
-# TODO: Tail? Or stage (with screen/projector?)? Or tail circled around to make a circular 'viewing window'?
 image.show()
