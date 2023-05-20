@@ -16,9 +16,36 @@ draw.rectangle([(960,360), (1030, 380)], fill='black')
 draw.pieslice([(965,375), (985, 395)], start=0, end=360, fill='white')
 
 # Mouth
-draw.chord([(920, 370), (1005, 440)], start=20, end=120, fill='black')
+draw.chord([(915, 360), (1025, 440)], start=20, end=120, fill='black')
 
-# TODO: Microphone
+# Microphone
+draw.ellipse([(865, 420), (915, 470)], outline="black")
+draw.polygon([(865, 445), (915, 445), (905, 525), (875, 525)], fill="black")
+# Vertical microphone crosshatching
+draw.line([(868, 433), (868, 450)], fill="black")
+draw.line([(871, 430), (871, 450)], fill="black")
+draw.line([(874, 427), (874, 450)], fill="black")
+draw.line([(877, 424), (877, 450)], fill="black")
+draw.line([(880, 422), (880, 450)], fill="black")
+draw.line([(883, 421), (883, 450)], fill="black")
+draw.line([(886, 420), (886, 450)], fill="black")
+draw.line([(889, 420), (889, 450)], fill="black")
+draw.line([(892, 420), (892, 450)], fill="black")
+draw.line([(895, 421), (895, 450)], fill="black")
+draw.line([(898, 422), (898, 450)], fill="black")
+draw.line([(901, 423), (901, 450)], fill="black")
+draw.line([(904, 424), (904, 450)], fill="black")
+draw.line([(907, 427), (907, 450)], fill="black")
+draw.line([(910, 430), (910, 450)], fill="black")
+draw.line([(913, 435), (913, 450)], fill="black")
+# Horizontal microphone crosshatching
+draw.line([(877, 424), (903, 424)], fill="black")
+draw.line([(874, 427), (906, 427)], fill="black")
+draw.line([(871, 430), (909, 430)], fill="black")
+draw.line([(869, 433), (911, 433)], fill="black")
+draw.line([(868, 436), (912, 436)], fill="black")
+draw.line([(867, 439), (913, 439)], fill="black")
+draw.line([(865, 442), (915, 442)], fill="black")
 
 # TODO: Tail? Or stage (with screen/projector?)? Or tail circled around to make a circular 'viewing window'?
 image.show()
