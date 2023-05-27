@@ -8,12 +8,13 @@ This should (soon) be able to run on a Raspberry Pi and display arbitrary presen
 2. (Recommended) Set up your newly installed image with a user called 'speaker'
 3. Ensure all software is up to date: sudo apt-get update && sudo apt-get dist-upgrade -y
 4. Install prerequisites: sudo apt-get install pdf-presenter-console gstreamer1.0-gtk3 libreoffice-impress -y
-# From here
 5. Clone the speaker station code: git clone https://github.com/geokala/speaker_station ~/speaker_station
 6. Prepare a venv: python3 -mvenv ~/speaker_station
 7. Install prerequisites: ~/speaker_station/bin/pip install ~/speaker_station/requirements.txt
+# From here
 8. Disable "USB key inserted notification" (how?)
 9. Set ~/speaker_station/wallpaper.png as the background (how?)
 10. Set ~/speaker_station/bin/python ~/speaker_station/speaker_station to run on startup (how?)
 11. Give it a test run by rebooting, ensuring the speaker station runs on one monitor, and when you insert a USB key containing presentations (then hit r) you can present them as expected.
-12. Remember to clear out any SSH keys or Wifi credentials you used during prep.13. You can now power off and copy the image somewhere for posterity.
+12. Remember to clear out any bash history, SSH keys or Wifi credentials you used during prep.
+13. You can now power off and copy the image somewhere for posterity.
