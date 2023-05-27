@@ -11,10 +11,11 @@ This should (soon) be able to run on a Raspberry Pi and display arbitrary presen
 5. Clone the speaker station code: git clone https://github.com/geokala/speaker_station ~/speaker_station
 6. Prepare a venv: python3 -mvenv ~/speaker_station
 7. Install prerequisites: ~/speaker_station/bin/pip install ~/speaker_station/requirements.txt
+8. Insert a USB key to ensure appropriately permissioned /media subdir exists.
+9. Set desktop background pcmanfm --set-wallpaper ~/speaker_station/wallpaper.png
 # From here
-8. Disable "USB key inserted notification" (how?)
-9. Set ~/speaker_station/wallpaper.png as the background (how?)
-10. Set ~/speaker_station/bin/python ~/speaker_station/speaker_station to run on startup (how?)
-11. Give it a test run by rebooting, ensuring the speaker station runs on one monitor, and when you insert a USB key containing presentations (then hit r) you can present them as expected.
-12. Remember to clear out any bash history, SSH keys or Wifi credentials you used during prep.
-13. You can now power off and copy the image somewhere for posterity.
+10. Disable "USB key inserted notification" (how?)
+11. Set ~/speaker_station/bin/python ~/speaker_station/speaker_station to run on startup (how?)
+12. Give it a test run by rebooting, ensuring the speaker station runs on one monitor, and when you insert a USB key containing presentations (then hit r) you can present them as expected.
+13. Remember to clear out any bash history, SSH keys or Wifi credentials you used during prep.
+14. You can now power off and copy the image somewhere for posterity.
