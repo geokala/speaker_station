@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=speaker_station
+Comment=For display presentations loaded from USB
+NoDisplay=false
+Exec=/home/speaker/speaker_station/autostart

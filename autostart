@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+sudo -uspeaker /usr/bin/lxterminal --command="/home/speaker/speaker_station/bin/python /home/speaker/speaker_station/speaker_station" &
+WINDOW_ID=$(/usr/bin/xdotool search --onlyvisible --sync --name "python")
+/usr/bin/xdotool windowmove ${WINDOW_ID} 0 0
+/usr/bin/xdotool windowsize ${WINDOW_ID} 100% 100%
